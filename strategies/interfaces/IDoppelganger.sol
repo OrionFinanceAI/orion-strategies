@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Id} from "../../lib/metamorpho/src/interfaces/IMetaMorpho.sol";
+import { Id } from "../../lib/metamorpho/src/interfaces/IMetaMorpho.sol";
 
 interface IDoppelganger {
     /// @notice Reverted when a market is not enabled on the target vault.

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.13;
 
 // import from MetaMorpho repo so the type is compatible
-import {Position, Market} from "../lib/metamorpho/lib/morpho-blue/src/interfaces/IMorpho.sol";
-import {MarketParamsLib} from "../lib/metamorpho/lib/morpho-blue/src/libraries/MarketParamsLib.sol";
+import { Position, Market } from "../lib/metamorpho/lib/morpho-blue/src/interfaces/IMorpho.sol";
+import { MarketParamsLib } from "../lib/metamorpho/lib/morpho-blue/src/libraries/MarketParamsLib.sol";
 import {
     IMetaMorpho,
     MarketConfig,
@@ -13,7 +13,7 @@ import {
     MarketAllocation
 } from "../lib/metamorpho/src/interfaces/IMetaMorpho.sol";
 
-import {IDoppelganger} from "./interfaces/IDoppelganger.sol";
+import { IDoppelganger } from "./interfaces/IDoppelganger.sol";
 
 /**
  * @title Doppelganger
@@ -36,7 +36,8 @@ contract Doppelganger is IDoppelganger {
     /// @dev An array of market IDs added to `vault`.
     Id[] public markets;
 
-    /// @dev Maps market IDs to their parameters. A zero address for `loanToken` indicates the market has not been added.
+    /// @dev Maps market IDs to their parameters.
+    /// A zero address for `loanToken` indicates the market has not been added.
     mapping(Id => MarketParams) public marketParams;
 
     constructor(IMorpho _morpho, IMetaMorpho _vault, IMetaMorpho _targetVault) {
@@ -74,7 +75,8 @@ contract Doppelganger is IDoppelganger {
         uint256 vaultSize = vault.lastTotalAssets();
 
         // Calculate the total size of the target vault based on tracked markets.
-        // This prevents disproportional allocations if new markets are available on `targetVault` but not yet added to `vault`.
+        // This prevents disproportional allocations if new markets are
+        // available on `targetVault` but not yet added to `vault`.
         uint256 targetVaultSize;
 
         uint8 length = uint8(markets.length);
@@ -96,13 +98,16 @@ contract Doppelganger is IDoppelganger {
             Id marketId = markets[i];
             uint256 targetVaultAllocation = targetVaultAllocations[i];
 
-            uint256 newAllocation = targetVaultAllocation * vaultSize / targetVaultSize;
+            uint256 newAllocation = (targetVaultAllocation * vaultSize) / targetVaultSize;
 
             uint256 currentAllocation = _getSuppliedAsset(marketId, address(vault));
             bool isWithdraw = newAllocation < currentAllocation;
 
-            pendingAllocations[i] =
-                PendingAllocation({marketId: marketId, isWithdraw: isWithdraw, amount: newAllocation});
+            pendingAllocations[i] = PendingAllocation({
+                marketId: marketId,
+                isWithdraw: isWithdraw,
+                amount: newAllocation
+            });
         }
         // Prepare parameters for the `reallocate` call on `vault`.
         MarketAllocation[] memory allocations = new MarketAllocation[](length);
@@ -132,16 +137,18 @@ contract Doppelganger is IDoppelganger {
         vault.reallocate(allocations);
     }
 
-    /// @dev Retrieves the amount of supplied assets in a specific market for a given account, based on the current share price.
+    /// @dev Retrieves the amount of assets in a specific market for a given account based on current share price.
     /// @param marketId The ID of the market.
     /// @param account The account address.
     /// @return The amount of supplied assets in the market for the account.
     function _getSuppliedAsset(Id marketId, address account) internal view returns (uint256) {
-        // TODO: This function currently calls `morpho.market(marketId)` twice for each allocation calculation during `reallocate`.
+        // TODO: This function currently calls `morpho.market(marketId)`
+        // twice for each allocation calculation during `reallocate`.
+
         Market memory market = morpho.market(marketId);
 
         Position memory position = morpho.position(marketId, account);
 
-        return position.supplyShares * market.totalSupplyAssets / market.totalSupplyShares;
+        return (position.supplyShares * market.totalSupplyAssets) / market.totalSupplyShares;
     }
 }

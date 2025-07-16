@@ -1,0 +1,41 @@
+name: "CI"
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    name: "Build, Lint and Test"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Check out the repo"
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: "Install Pnpm"
+        uses: pnpm/action-setup@v2
+        with:
+          version: "8"
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: lts/*
+
+      - name: "Install dependencies"
+        run: pnpm install
+
+      - name: "Lint"
+        run: pnpm lint
+
+      - name: "Test"
+        run: pnpm test
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
