@@ -36,3 +36,6 @@ jobs:
 
       - name: "Test"
         run: pnpm test
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
