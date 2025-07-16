@@ -1,3 +1,6 @@
+packages:
+  - 'strategies/*'
+
 ignoredBuiltDependencies:
   - '@arbitrum/nitro-contracts'
   - sqlite3
