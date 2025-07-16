@@ -1,0 +1,3 @@
+ignoredBuiltDependencies:
+  - '@arbitrum/nitro-contracts'
+  - sqlite3

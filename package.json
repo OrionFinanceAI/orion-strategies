@@ -1,0 +1,43 @@
+{
+  "name": "@orion-finance/strategies",
+  "description": "Orion Finance Strategies",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": {
+    "name": "Orion Finance",
+    "url": "https://github.com/OrionFinanceAI"
+  },
+  "scripts": {
+    "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json && pnpm typechain",
+    "build": "pnpm clean && pnpm compile",
+    "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
+    "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
+    "test": "hardhat test --network hardhat",
+    "lint": "pnpm lint:sol && pnpm prettier:check",
+    "lint:sol": "solhint --max-warnings 25 \"strategies/**/*.sol\"",
+    "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\"",
+    "prettier:write": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\""
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.9",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.14",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.6.1",
+    "hardhat": "^2.25.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-solidity": "^1.4.3",
+    "rimraf": "^5.0.10",
+    "solhint": "^5.2.0",
+    "solhint-plugin-prettier": "^0.1.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.3.0",
+    "@openzeppelin/contracts-upgradeable": "^5.3.0",
+    "orion-protocol": "OrionFinanceAI/protocol#main"
+  }
+}
